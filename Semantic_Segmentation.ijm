@@ -11,7 +11,7 @@ if (background == "Yes") {
 	setOption("BlackBackground", false);
 }
 
-//setBatchMode(true);
+setBatchMode(true);
 listTarget=getFileList(dirTarget);
 listPrediction=getFileList(dirPrediction);
 intersectionArea=0;
@@ -44,7 +44,6 @@ for (i=0; i<listTarget.length; i++) {
 	run("Close");
 	//imageCalculator("XOR create", "target", "prediction");
 	//rename("disjunctive union");
-	waitForUser;
 	run("Close All");
 }
 
