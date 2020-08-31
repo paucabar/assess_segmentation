@@ -11,7 +11,6 @@ if (background == "Yes") {
 	setOption("BlackBackground", false);
 }
 
-setBatchMode(true);
 listTarget=getFileList(dirTarget);
 listPrediction=getFileList(dirPrediction);
 intersectionArea=0;
