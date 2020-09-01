@@ -65,25 +65,30 @@ for (i=0; i<listTarget.length; i++) {
 				// get the code
 				selectImage("RCC");
 				code=getPixel(x, y);
-				dr=true;
 				
 				// get ROIs of connected objects on the 'prediction' 
 				if (code!=0) {
-					dr=false;
 					selectImage("prediction");
-					doWand(predictionX(y), predictionY(y));
+					doWand(predictionX[y], predictionY[y]);
 					roiManager("add");
+					roiCount=roiManager("count");
+					roiManager("select", roiCount-1);
 					roiManager("rename", y);
 				}
 			}
 
 			// compare
-			if (!dr) {
+			roiCount=roiManager("count");
+			if (roiCount != 0) {
 				roiManager("deselect");
 				roiManager("combine");
 				run("Create Mask");
-				rename("connected masks");
-				
+				rename("connected_masks");
+				selectImage("target");
+				doWand(predictionX[x], predictionY[x]);
+				run("Create Mask");
+				rename("assessed_object");
+				exit();
 			}
 		}
 	}
