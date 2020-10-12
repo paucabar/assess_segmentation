@@ -1,8 +1,9 @@
-#@ String (label=" ", value="<html><font size=6><b>Assess segmentation</font><br><font color=teal>Semantic & Instance</font></b></html>", visibility=MESSAGE, persist=false) heading
+#@ String (label=" ", value="<html><font size=6><b>Assess Segmentation</font><br><font color=teal>F1 Score - IoU</font></b></html>", visibility=MESSAGE, persist=false) heading
 #@ File(label="Select dir (target):", persist=true, style="directory") dirTarget
 #@ File(label="Select dir (prediction):", persist=true, style="directory") dirPrediction
 #@ String (label="Postfix", value="_prediction", persist=false) postfix
-#@ String (label="Extension", choices={"tif", "png"}, value="tif", persist=true, style="listBox") extension
+#@ String (label="Format", choices={"tif", "png"}, value="tif", persist=true, style="listBox") format
+#@ Float (label="Threshold IoU", value=0.5, max=1, min=0, stepSize=0.05, style="slider", persist=false) thresholdIoU
 #@ String (label="<html>Black Background:</html>", choices={"Yes", "No"}, value="Yes", persist=true, style="radioButtonHorizontal") background
 #@ String (label=" ", value="<html><img src=\"https://live.staticflickr.com/65535/48557333566_d2a51be746_o.png\"></html>", visibility=MESSAGE, persist=false) logo
 #@ String (label=" ", value="<html><font size=2><b>Neuromolecular Biology Lab</b><br>ERI BIOTECMED, Universitat de València (Valencia, Spain)</font></html>", visibility=MESSAGE, persist=false) message
@@ -21,14 +22,14 @@ print("\\Clear");
 listTarget=getFileList(dirTarget);
 
 // batch mode
-//setBatchMode(true);
+setBatchMode(true);
 for (i=0; i<listTarget.length; i++) {
-	if (endsWith(listTarget[i], extension)) {
+	if (endsWith(listTarget[i], format)) {
 		open(dirTarget+File.separator+listTarget[i]);
 		rename("target");
 		indexDot=indexOf(listTarget[i], ".");
 		filenameTarget=substring(listTarget[i], 0, indexDot);
-		open(dirPrediction+File.separator+filenameTarget+postfix+"."+extension);
+		open(dirPrediction+File.separator+filenameTarget+postfix+"."+format);
 		rename("prediction");
 
 		// get starting coordinates from target

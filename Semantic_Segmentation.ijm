@@ -1,3 +1,4 @@
+#@ String (label=" ", value="<html><font size=6><b>Assess Segmentation</font><br><font color=teal>Intersection over Union (IoU)</font></b></html>", visibility=MESSAGE, persist=false) heading
 #@ File(label="Select dir (target):", persist=true, style="directory") dirTarget
 #@ File(label="Select dir (prediction):", persist=true, style="directory") dirPrediction
 #@ String (label="Postfix", value="_prediction", persist=false) postfix
