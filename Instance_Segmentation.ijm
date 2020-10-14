@@ -22,7 +22,7 @@ print("\\Clear");
 listTarget=getFileList(dirTarget);
 
 // batch mode
-setBatchMode(true);
+//setBatchMode(true);
 for (i=0; i<listTarget.length; i++) {
 	if (endsWith(listTarget[i], format)) {
 		open(dirTarget+File.separator+listTarget[i]);
@@ -35,8 +35,8 @@ for (i=0; i<listTarget.length; i++) {
 		// get starting coordinates from target
 		scTarget=getStartingCoordinates("target");
 		arrayLength=scTarget.length;
-		targetX=Array.slice(scTarget,0,arrayLength/2-1);
-		targetY=Array.slice(scTarget,arrayLength/2,arrayLength-1);
+		targetX=Array.slice(scTarget,0,arrayLength/2);
+		targetY=Array.slice(scTarget,arrayLength/2,arrayLength);
 		run("Clear Results");
 		//selectImage("target");
 		//makeSelection("point", targetX, targetY);
@@ -44,8 +44,8 @@ for (i=0; i<listTarget.length; i++) {
 		// get starting coordinates from prediction
 		scPrediction=getStartingCoordinates("prediction");
 		arrayLength=scPrediction.length;
-		predictionX=Array.slice(scPrediction,0,arrayLength/2-1);
-		predictionY=Array.slice(scPrediction,arrayLength/2,arrayLength-1);
+		predictionX=Array.slice(scPrediction,0,arrayLength/2);
+		predictionY=Array.slice(scPrediction,arrayLength/2,arrayLength);
 		run("Clear Results");
 		//selectImage("prediction");
 		//makeSelection("point", predictionX, predictionY);
@@ -57,39 +57,73 @@ for (i=0; i<listTarget.length; i++) {
 
 		// create IC image (instance segmentation)
 		newImage("IC", "8-bit black", widthRCC, heightRCC, 1);
-		run("glasbey ");
 		
 		// fill the IC table
 		for (x=0; x<widthRCC; x++) {
+
+			// check for the number of objects overlapping
+			nOverlap=0;
 			for (y=0; y<heightRCC; y++) {
-				
-				// get the code
 				selectImage("RCC");
 				code=getPixel(x, y);
-				
-				// get ROIs of connected objects on the 'prediction' 
-				if (code!=0) {
-					selectImage("prediction");
-					doWand(predictionX[y], predictionY[y]);
-					roiManager("add");
-					roiCount=roiManager("count");
-					roiManager("select", roiCount-1);
-					roiManager("rename", y);
+				if (code > 0) {
+					nOverlap++;
 				}
 			}
 
-			// compare
-			roiCount=roiManager("count");
-			if (roiCount != 0) {
-				roiManager("deselect");
-				roiManager("combine");
-				run("Create Mask");
-				rename("connected_masks");
+			// if there is one or more objects overlapping
+			if (nOverlap > 0) {
 				selectImage("target");
-				doWand(predictionX[x], predictionY[x]);
+				doWand(targetX[x], targetY[x]);
 				run("Create Mask");
-				rename("assessed_object");
-				exit();
+				rename("target-"+x);
+				objectMatchID=-1;
+				IoU=0;
+				for (y=0; y<heightRCC; y++) {
+					
+					// find the obects (code > 0)
+					selectImage("RCC");
+					code=getPixel(x, y);
+					
+					// compare with target
+					if (code!=0) {
+						selectImage("prediction");
+						doWand(predictionX[y], predictionY[y]);
+						run("Create Mask");
+						rename("prediction-"+y);
+
+						// intersection over union
+						run("Set Measurements...", "area redirect=None decimal=2");
+						imageCalculator("AND create", "target-"+x, "prediction-"+y);
+						rename("intersection-"+y);
+						run("Analyze Particles...", "pixel summarize");
+						IJ.renameResults("Summary", "Results");
+						intersectionArea=getResult("Total Area", 0);
+						close("intersection-"+y);
+						imageCalculator("OR create", "target-"+x, "prediction-"+y);
+						rename("union-"+y);
+						run("Analyze Particles...", "pixel summarize");
+						IJ.renameResults("Summary", "Results");
+						unionArea=getResult("Total Area", 0);
+						close("union-"+y);
+						IoU_iteration=intersectionArea/unionArea;
+						close("prediction-"+y);
+						print(x, "vs", y, IoU_iteration);
+
+						// update objectMatchID & IoR
+						if (IoU_iteration > IoU) {
+							IoU=IoU_iteration;
+							objectMatchID=y;
+						}
+					}
+				}
+			}
+			if (IoU >= thresholdIoU) {
+				selectImage("IC");
+				setPixel(x, objectMatchID, 255);
+			}
+			if (isOpen("target-"+x)) {
+				close("target-"+x);
 			}
 		}
 	}
