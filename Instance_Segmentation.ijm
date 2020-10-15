@@ -22,7 +22,7 @@ print("\\Clear");
 listTarget=getFileList(dirTarget);
 
 // batch mode
-//setBatchMode(true);
+setBatchMode(true);
 for (i=0; i<listTarget.length; i++) {
 	if (endsWith(listTarget[i], format)) {
 		print(listTarget[i]);
@@ -114,7 +114,10 @@ for (i=0; i<listTarget.length; i++) {
 			run("Clear Results");
 		}
 		
-		// IoU of (predicted mask, target mask) > threshold
+		// use the IC image to count:
+		// true positives (TP)
+		// false positives (FP)
+		// false negatives (FN)
 		selectImage("IC");
 		
 		// count true positives (TP)
@@ -158,9 +161,22 @@ for (i=0; i<listTarget.length; i++) {
 		print("FP", FP);
 		print("FN", FN);
 		
-		// calculate precision and recall
+		// calculate precision, recall and f1_score
+		precision=TP/(TP+FP);
+		recall=TP/(TP+FN);
+		f1_score=(2*precision*recall)/(precision+recall);
+
+		print("precision", precision);
+		print("recall", recall);
+		print("F1 Score", f1_score);
+
+		// close all
+		run("Close All");
 	}
 }
+
+selectWindow("Results");
+run("Close");
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -195,6 +211,6 @@ function getIoU (a, b) {
 	close("union-"+b);
 	IoU_iteration=intersectionArea/unionArea;
 	close("prediction-"+y);
-	print(a, "vs", b, IoU_iteration);
+	print("IoU", a, "vs", b, IoU_iteration);
 	return IoU_iteration;
 }
