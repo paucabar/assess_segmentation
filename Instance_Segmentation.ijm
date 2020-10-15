@@ -82,13 +82,13 @@ for (i=0; i<listTarget.length; i++) {
 			}
 
 			// if there is one or more objects overlapping
+			objectMatchID=-1;
+			IoU=0;			
 			if (nOverlap > 0) {
 				selectImage("target");
 				doWand(targetX[x], targetY[x]);
 				run("Create Mask");
 				rename("target-"+x);
-				objectMatchID=-1;
-				IoU=0;
 				for (y=0; y<heightRCC; y++) {
 					
 					// find the obects (code > 0)
