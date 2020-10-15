@@ -19,6 +19,14 @@ listTarget=getFileList(dirTarget);
 intersectionArea=0;
 unionArea=0;
 
+// create results table
+title1 = "Results table";
+title2 = "["+title1+"]";
+f = title2;
+run("Table...", "name="+title2+" width=600 height=500");
+headings="\\Headings:n\tFilename\tIntersection\tUnion\tIoU";
+print(f, headings);
+
 // batch mode
 setBatchMode(true);
 for (i=0; i<listTarget.length; i++) {
@@ -35,19 +43,24 @@ for (i=0; i<listTarget.length; i++) {
 		rename("intersection");
 		run("Analyze Particles...", "pixel summarize");
 		IJ.renameResults("Summary", "Results");
-		intersectionArea+=getResult("Total Area", 0);
+		intersectionArea=getResult("Total Area", 0);
 		run("Close");
 		imageCalculator("OR create", "target", "prediction");
 		rename("union");
 		run("Analyze Particles...", "pixel summarize");
 		IJ.renameResults("Summary", "Results");
-		unionArea+=getResult("Total Area", 0);
+		unionArea=getResult("Total Area", 0);
 		run("Close");
 		//imageCalculator("XOR create", "target", "prediction");
 		//rename("disjunctive union");
 		run("Close All");
+		//fill results table
+		IoU=intersectionArea/unionArea;
+		n=d2s(i+1, 0);
+		rowData= n + "\t" + listTarget[i] + "\t" + intersectionArea + "\t" + unionArea + "\t" + IoU;
+		print(f, rowData);
 	}
 }
 
-IoU=intersectionArea/unionArea;
-print(IoU);
+selectWindow("Results table");
+saveAs("Text", dirTarget+File.separator+"ResultsTable_IoU.csv");

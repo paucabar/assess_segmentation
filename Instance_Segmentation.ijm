@@ -22,7 +22,6 @@ print("\\Clear");
 listTarget=getFileList(dirTarget);
 
 // create results table
-// results table
 title1 = "Results table";
 title2 = "["+title1+"]";
 f = title2;
@@ -191,6 +190,9 @@ for (i=0; i<listTarget.length; i++) {
 
 selectWindow("Results");
 run("Close");
+threshold100=thresholdIoU*100;
+selectWindow("Results table");
+saveAs("Text", dirTarget+File.separator+"ResultsTable_"+threshold100+".csv");
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
