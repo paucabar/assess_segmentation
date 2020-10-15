@@ -3,7 +3,7 @@
 #@ File(label="Select dir (prediction):", persist=true, style="directory") dirPrediction
 #@ String (label="Postfix", value="_prediction", persist=false) postfix
 #@ String (label="Format", choices={"tif", "png"}, value="tif", persist=true, style="listBox") format
-#@ Float (label="Threshold IoU", value=0.5, max=1, min=0, stepSize=0.05, style="slider", persist=false) thresholdIoU
+#@ Float (label="Threshold IoU", value=0.5, max=1, min=0, stepSize=0.05, style="slider", persist=true) thresholdIoU
 #@ String (label="<html>Black Background:</html>", choices={"Yes", "No"}, value="Yes", persist=true, style="radioButtonHorizontal") background
 #@ String (label=" ", value="<html><img src=\"https://live.staticflickr.com/65535/48557333566_d2a51be746_o.png\"></html>", visibility=MESSAGE, persist=false) logo
 #@ String (label=" ", value="<html><font size=2><b>Neuromolecular Biology Lab</b><br>ERI BIOTECMED, Universitat de València (Valencia, Spain)</font></html>", visibility=MESSAGE, persist=false) message
@@ -15,7 +15,7 @@ if (background == "Yes") {
 	setOption("BlackBackground", false);
 }
 setOption("ExpandableArrays", true);
-roiManager("reset");
+//roiManager("reset");
 print("\\Clear");
 
 // get file list
@@ -25,6 +25,7 @@ listTarget=getFileList(dirTarget);
 //setBatchMode(true);
 for (i=0; i<listTarget.length; i++) {
 	if (endsWith(listTarget[i], format)) {
+		print(listTarget[i]);
 		open(dirTarget+File.separator+listTarget[i]);
 		rename("target");
 		indexDot=indexOf(listTarget[i], ".");
@@ -93,26 +94,11 @@ for (i=0; i<listTarget.length; i++) {
 						rename("prediction-"+y);
 
 						// intersection over union
-						run("Set Measurements...", "area redirect=None decimal=2");
-						imageCalculator("AND create", "target-"+x, "prediction-"+y);
-						rename("intersection-"+y);
-						run("Analyze Particles...", "pixel summarize");
-						IJ.renameResults("Summary", "Results");
-						intersectionArea=getResult("Total Area", 0);
-						close("intersection-"+y);
-						imageCalculator("OR create", "target-"+x, "prediction-"+y);
-						rename("union-"+y);
-						run("Analyze Particles...", "pixel summarize");
-						IJ.renameResults("Summary", "Results");
-						unionArea=getResult("Total Area", 0);
-						close("union-"+y);
-						IoU_iteration=intersectionArea/unionArea;
-						close("prediction-"+y);
-						print(x, "vs", y, IoU_iteration);
+						IoU_xy=getIoU (x, y);
 
 						// update objectMatchID & IoR
-						if (IoU_iteration > IoU) {
-							IoU=IoU_iteration;
+						if (IoU_xy > IoU) {
+							IoU=IoU_xy;
 							objectMatchID=y;
 						}
 					}
@@ -125,6 +111,7 @@ for (i=0; i<listTarget.length; i++) {
 			if (isOpen("target-"+x)) {
 				close("target-"+x);
 			}
+			run("Clear Results");
 		}
 	}
 }
@@ -143,4 +130,25 @@ function getStartingCoordinates (image) {
 		scConcat=Array.concat(scX,scY);
 	}
 	return scConcat;
+}
+
+// calculate the IoU of two masks
+function getIoU (a, b) {
+	run("Set Measurements...", "area redirect=None decimal=2");
+	imageCalculator("AND create", "target-"+a, "prediction-"+b);
+	rename("intersection-"+b);
+	run("Analyze Particles...", "pixel summarize");
+	IJ.renameResults("Summary", "Results");
+	intersectionArea=getResult("Total Area", 0);
+	close("intersection-"+b);
+	imageCalculator("OR create", "target-"+a, "prediction-"+b);
+	rename("union-"+b);
+	run("Analyze Particles...", "pixel summarize");
+	IJ.renameResults("Summary", "Results");
+	unionArea=getResult("Total Area", 0);
+	close("union-"+b);
+	IoU_iteration=intersectionArea/unionArea;
+	close("prediction-"+y);
+	print(a, "vs", b, IoU_iteration);
+	return IoU_iteration;
 }
