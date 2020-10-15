@@ -21,6 +21,15 @@ print("\\Clear");
 // get file list
 listTarget=getFileList(dirTarget);
 
+// create results table
+// results table
+title1 = "Results table";
+title2 = "["+title1+"]";
+f = title2;
+run("Table...", "name="+title2+" width=600 height=500");
+headings="\\Headings:n\tFilename\tThreshold (IoU)\tTP\tFP\tFN\tPrecision\tRecall\tF1 Score";
+print(f, headings);
+
 // batch mode
 setBatchMode(true);
 for (i=0; i<listTarget.length; i++) {
@@ -169,6 +178,11 @@ for (i=0; i<listTarget.length; i++) {
 		print("precision", precision);
 		print("recall", recall);
 		print("F1 Score", f1_score);
+
+		// fill results table
+		n=d2s(i+1, 0);
+		rowData= n + "\t" + listTarget[i] + "\t" + thresholdIoU + "\t" + TP + "\t" + FP + "\t" + FN + "\t" + precision + "\t" + recall + "\t" + f1_score;
+		print(f, rowData);
 
 		// close all
 		run("Close All");
