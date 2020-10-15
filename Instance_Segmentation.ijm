@@ -113,6 +113,52 @@ for (i=0; i<listTarget.length; i++) {
 			}
 			run("Clear Results");
 		}
+		
+		// IoU of (predicted mask, target mask) > threshold
+		selectImage("IC");
+		
+		// count true positives (TP)
+		TP=0;
+		for (x=0; x<widthRCC; x++) {
+			sum=0;
+			for (y=0; y<heightRCC; y++) {
+				selectImage("IC");
+				sum+=getPixel(x, y);
+			}
+			if (sum > 0) {
+				TP++;
+			}
+		}
+		// count false positives (FP)
+		FP=0;
+		for (y=0; y<heightRCC; y++) {
+			sum=0;
+			for (x=0; x<widthRCC; x++) {
+				selectImage("IC");
+				sum+=getPixel(x, y);
+			}
+			if (sum == 0) {
+				FP++;
+			}
+		}
+		// count false negatives (FN)
+		FN=0;
+		for (x=0; x<widthRCC; x++) {
+			sum=0;
+			for (y=0; y<heightRCC; y++) {
+				selectImage("IC");
+				sum+=getPixel(x, y);
+			}
+			if (sum == 0) {
+				FN++;
+			}
+		}
+
+		print("TP", TP);
+		print("FP", FP);
+		print("FN", FN);
+		
+		// calculate precision and recall
 	}
 }
 
