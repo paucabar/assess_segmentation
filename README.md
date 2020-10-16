@@ -56,7 +56,7 @@ Colored images show the intersection between the ground truth and the different 
 5. Select the image format of your images
 6. Set the background (black or white)
 7. Ok
-8. A result table (.csv) will be saved within the target folder.
+8. A result table (.csv) will be saved within the prediction folder.
 
 ## Instance Segmentation
 
@@ -68,4 +68,4 @@ Colored images show the intersection between the ground truth and the different 
 6. Set the threshold of the IoU
 7. Set the background (black or white)
 8. Ok
-9. A result table (.csv) will be saved within the target folder.
+9. A result table (.csv) will be saved within the prediction folder.
