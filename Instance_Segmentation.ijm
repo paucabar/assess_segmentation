@@ -192,7 +192,7 @@ selectWindow("Results");
 run("Close");
 threshold100=thresholdIoU*100;
 selectWindow("Results table");
-saveAs("Text", dirTarget+File.separator+"ResultsTable_"+threshold100+".csv");
+saveAs("Text", dirPrediction+File.separator+"ResultsTable_"+threshold100+".csv");
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 

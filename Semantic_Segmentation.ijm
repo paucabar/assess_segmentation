@@ -63,4 +63,4 @@ for (i=0; i<listTarget.length; i++) {
 }
 
 selectWindow("Results table");
-saveAs("Text", dirTarget+File.separator+"ResultsTable_IoU.csv");
+saveAs("Text", dirPrediction+File.separator+"ResultsTable_IoU.csv");
