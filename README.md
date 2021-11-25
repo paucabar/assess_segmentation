@@ -21,7 +21,7 @@ Learn more about [methods to evaluate image segmentation models](https://www.jer
 4. Click on <code>Add update site</code>
 5. A new blank row is to be created at the bottom of the update sites list
 6. Type **NeuroMol Lab** in the **Name** column
-7. Type **http://sites.imagej.net/Paucabar/** in the **URL** column
+7. Type **https://sites.imagej.net/NeuroMol-Lab/** in the **URL** column
 8. <code>Close</code> the update sites window
 9. <code>Apply changes</code>
 10. Restart FIJI
@@ -49,7 +49,7 @@ Colored images show the intersection between the ground truth and the different 
 
 ## Semantic Segmentation
 
-1. Run the **Semantic Segmentation** macro (<code>Plugins > NeuroMol Lab > Assess Segmentation > Semantic Segmentation</code>)
+1. Run the **Semantic Segmentation** macro (<code>Plugins > NeuroMol-Lab > Assess Segmentation > Semantic Segmentation</code>)
 2. Select the directory containing the target images (ground truth)
 3. Select the directory containing the prediction images
 4. Type the tag identifying the prediction images
@@ -60,7 +60,7 @@ Colored images show the intersection between the ground truth and the different 
 
 ## Instance Segmentation
 
-1. Run the **Instance Segmentation** macro (<code>Plugins > NeuroMol Lab > Assess Segmentation > Instance Segmentation</code>)
+1. Run the **Instance Segmentation** macro (<code>Plugins > NeuroMol-Lab > Assess Segmentation > Instance Segmentation</code>)
 2. Select the directory containing the target images (ground truth)
 3. Select the directory containing the prediction images
 4. Type the tag identifying the prediction images
