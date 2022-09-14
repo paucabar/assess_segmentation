@@ -199,6 +199,7 @@ saveAs("Text", dirPrediction+File.separator+"ResultsTable_"+threshold100+".csv")
 // get the starting coordinates of the objects on a binary mask
 function getStartingCoordinates (image) {
 	selectImage(image);
+	run("Set Scale...", "distance=0 known=0 pixel=1 unit=pixel");
 	run("Particles8 ", "white show=Particles minimum=0 maximum=9999999 display redirect=None");
 	scX=newArray(nResults);
 	scY=newArray(nResults);
